@@ -4,27 +4,27 @@
 # _TAGGED is used to handle the build stages
 
 # "11076708" as of 2024/03/04
-ARG ANDROID_SDK_TOOLS_TAGGED="latest"
+ARG ANDROID_SDK_TOOLS_TAGGED="tagged"
 ARG ANDROID_SDK_TOOLS_VERSION="11076708"
 
 # Valid values are "last8" or "tagged"
 # "last8" will grab the last 8 android-sdks, including extensions and
 # any potential future build tool release candidates
-ARG ANDROID_SDKS="last8"
+ARG ANDROID_SDKS="tagged"
 
-ARG NDK_TAGGED="latest"
+ARG NDK_TAGGED="tagged"
 ARG NDK_VERSION="26.2.11394342"
 
-ARG NODE_TAGGED="latest"
+ARG NODE_TAGGED="tagged"
 ARG NODE_VERSION="20.x"
 
-ARG BUNDLETOOL_TAGGED="latest"
+ARG BUNDLETOOL_TAGGED="tagged"
 ARG BUNDLETOOL_VERSION="1.15.6"
 
-ARG FLUTTER_TAGGED="latest"
-ARG FLUTTER_VERSION="3.19.2"
+ARG FLUTTER_TAGGED="tagged"
+ARG FLUTTER_VERSION="3.24.4"
 
-ARG JENV_TAGGED="latest"
+ARG JENV_TAGGED="tagged"
 ARG JENV_RELEASE="0.5.6"
 
 #----------~~~~~~~~~~**********~~~~~~~~~~~-----------#
@@ -123,7 +123,6 @@ RUN apt-get update -qq > /dev/null && \
         openjdk-8-jdk \
         openjdk-11-jdk \
         openjdk-17-jdk \
-        openjdk-21-jdk \
         openssh-client \
         pkg-config \
         ruby-full \
@@ -209,9 +208,8 @@ RUN . ~/.bash_profile && \
     jenv add /usr/lib/jvm/java-8-openjdk-$JDK_PLATFORM && \
     jenv add /usr/lib/jvm/java-11-openjdk-$JDK_PLATFORM && \
     jenv add /usr/lib/jvm/java-17-openjdk-$JDK_PLATFORM && \
-    jenv add /usr/lib/jvm/java-21-openjdk-$JDK_PLATFORM && \
     jenv versions && \
-    jenv global 21 && \
+    jenv global 17 && \
     java -version
 
 #----------~~~~~~~~~~*****
@@ -500,12 +498,29 @@ RUN git config --global --add safe.directory ${FLUTTER_HOME} && \
     cat ${DIRWORK}/.flutter_version >> ${INSTALLED_VERSIONS} && \
     rm -rf ${DIRWORK}/*
 
+#----------~~~~~~~~~~*****
+# build target: blokada
+#----------~~~~~~~~~~*****
+FROM --platform=linux/amd64 complete-flutter as blokada
+
+RUN flutter config --enable-android \
+                   --enable-linux-desktop \
+                   --enable-web \
+                   --no-enable-ios \
+ && flutter precache --universal --linux --web --no-ios
+
+# Just print basic env info
+RUN (yes | flutter doctor --android-licenses) \
+ && flutter --version \
+ && java -version
+
 # labels, see http://label-schema.org/
-LABEL maintainer="Ming Chen"
+LABEL maintainer="Karol Gusak"
 LABEL org.label-schema.schema-version="1.0"
-LABEL org.label-schema.name="mingc/android-build-box"
+LABEL org.label-schema.name="blokadaorg/blokada-apps-build-box"
 LABEL org.label-schema.version="${DOCKER_TAG}"
 LABEL org.label-schema.usage="/README.md"
-LABEL org.label-schema.docker.cmd="docker run --rm -v `pwd`:${FINAL_DIRWORK} mingc/android-build-box bash -c './gradlew build'"
+LABEL org.label-schema.docker.cmd="docker run --rm -v `pwd`:${FINAL_DIRWORK} blokadaorg/blokada-apps-build-box bash -c './gradlew build'"
 LABEL org.label-schema.build-date="${BUILD_DATE}"
 LABEL org.label-schema.vcs-ref="${SOURCE_COMMIT}@${SOURCE_BRANCH}"
+
