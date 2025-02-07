@@ -524,3 +524,6 @@ LABEL org.label-schema.docker.cmd="docker run --rm -v `pwd`:${FINAL_DIRWORK} blo
 LABEL org.label-schema.build-date="${BUILD_DATE}"
 LABEL org.label-schema.vcs-ref="${SOURCE_COMMIT}@${SOURCE_BRANCH}"
 
+
+COPY --chmod=07555 entrypoint.sh /entrypoint.sh
+ENTRYPOINT [ "/entrypoint.sh" ]
