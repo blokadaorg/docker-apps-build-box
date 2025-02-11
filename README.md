@@ -16,3 +16,11 @@ Supported repos:
 
 There should be no need to specify any params building this image. The defaults are set to match Blokada projects.
 See fork upstream README for advanced use.
+
+## Building
+
+To build on mac:
+
+```
+$ docker buildx build --platform=linux/amd64 -t docker-apps-build-box .
+```
