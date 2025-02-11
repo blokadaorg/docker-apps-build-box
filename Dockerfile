@@ -22,7 +22,7 @@ ARG BUNDLETOOL_TAGGED="tagged"
 ARG BUNDLETOOL_VERSION="1.15.6"
 
 ARG FLUTTER_TAGGED="tagged"
-ARG FLUTTER_VERSION="3.24.4"
+ARG FLUTTER_VERSION="3.27.4"
 
 ARG JENV_TAGGED="tagged"
 ARG JENV_RELEASE="0.5.6"
@@ -503,16 +503,20 @@ RUN git config --global --add safe.directory ${FLUTTER_HOME} && \
 #----------~~~~~~~~~~*****
 FROM --platform=linux/amd64 complete-flutter as blokada
 
+# Set Gradle options to disable file watching
+ENV GRADLE_OPTS="-Dorg.gradle.unsafe.disable.watch-fs=true -Dorg.gradle.vfs.watch=false"
+
 RUN flutter config --enable-android \
                    --enable-linux-desktop \
                    --enable-web \
                    --no-enable-ios \
- && flutter precache --universal --linux --web --no-ios
+ && flutter precache --universal --android --linux --web --no-ios
 
 # Just print basic env info
 RUN (yes | flutter doctor --android-licenses) \
  && flutter --version \
  && java -version
+
 
 # labels, see http://label-schema.org/
 LABEL maintainer="Karol Gusak"
