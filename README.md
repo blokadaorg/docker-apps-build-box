@@ -9,12 +9,12 @@ To use it, it should be enough to specify the following when running the contain
 - the make command of that repo to execute
 
 Supported repos:
-- six-common (to run flutter tests, or compile android module)
-- six-android (to compile all android apps)
-- six-ios will not be supported (since there is no decent way to compile ios projects in docker as of 2025)
+- blokada (to run flutter tests, compile android flutter common module, and android apps)
+- ios will not be supported (since there is no decent way to compile ios projects in docker as of 2025)
 - maybe web dashboard some day
 
-There should be no need to specify any params building this image. The defaults are set to match Blokada projects.
+There should be no need to specify any params building this image. The defaults are set to match Blokada projects. However, some env variables are expected to be set (see blokada repo Makefiles for details).
+
 See fork upstream README for advanced use.
 
 ## Building
